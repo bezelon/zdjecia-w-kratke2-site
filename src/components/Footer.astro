@@ -1,0 +1,77 @@
+---
+import businessData from '../content/business.json';
+---
+<footer class="footer">
+  <div class="container footer-container">
+    <div class="footer-brand">
+      <h3 class="footer-title">{businessData.companyName}</h3>
+      <p class="footer-tagline">{businessData.companyDesc}</p>
+    </div>
+    
+    <div class="footer-info">
+      <p class="contact-email">Inquiries: <a href={`mailto:${businessData.companyEmail}`}>{businessData.companyEmail}</a></p>
+      <p>&copy; {new Date().getFullYear()} {businessData.companyName}. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background-color: var(--bg-tertiary);
+    border-top: 1px solid var(--border-color);
+    padding: 4rem 0;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+  }
+
+  .footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  @media (max-width: 768px) {
+    .footer-container {
+      flex-direction: column;
+      gap: 2rem;
+      text-align: center;
+    }
+  }
+
+  .footer-title {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+
+  .footer-tagline {
+    font-size: 0.8rem;
+    max-width: 300px;
+    line-height: 1.5;
+  }
+
+  .footer-info {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  @media (max-width: 768px) {
+    .footer-info {
+      text-align: center;
+    }
+  }
+
+  .contact-email a {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .contact-email a:hover {
+    text-decoration: underline;
+  }
+</style>

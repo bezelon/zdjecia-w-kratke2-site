@@ -1,0 +1,226 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+// Generate static paths for all photos
+export async function getStaticPaths() {
+  const photos = await getCollection('photos');
+  return photos.map(photo => ({
+    params: { slug: photo.id },
+    props: { photo },
+  }));
+}
+
+const { photo } = Astro.props;
+const { Content } = await render(photo);
+
+// Format date taken
+const formattedDate = new Date(photo.data.date_taken).toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric'
+});
+---
+
+<Layout title={photo.data.title} description={`View the fine art photograph: ${photo.data.title} by Julian Vane.`}>
+  <div class="container section">
+    <a href="/#gallery-section" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Back to Gallery
+    </a>
+
+    <div class="photo-detail-layout">
+      <!-- Full Display Image -->
+      <div class="photo-viewer">
+        <img src={photo.data.image} alt={photo.data.title} class="full-image animate-fade-in" />
+      </div>
+
+      <!-- Details & Narrative Panel -->
+      <div class="photo-sidebar">
+        <header class="sidebar-header">
+          <span class="photo-category">{photo.data.category}</span>
+          <h1 class="photo-title">{photo.data.title}</h1>
+          <span class="photo-date">Shot on: {formattedDate}</span>
+        </header>
+
+        <!-- Technical EXIF Meta Box -->
+        {photo.data.equipment && (
+          <div class="meta-box">
+            <h4 class="meta-title">Technical Specifications</h4>
+            <div class="meta-content">
+              <div class="meta-item">
+                <span class="meta-label">Camera & Lens:</span>
+                <span class="meta-val">{photo.data.equipment}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <!-- Narrative content -->
+        <div class="photo-narrative markdown-body">
+          <Content />
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+    margin-bottom: 3rem;
+  }
+
+  .back-link:hover {
+    color: var(--text-primary);
+    transform: translateX(-3px);
+  }
+
+  .photo-detail-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  .photo-viewer {
+    width: 100%;
+    background-color: var(--bg-secondary);
+    border-radius: 0;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+  }
+
+  .full-image {
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .photo-sidebar {
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .sidebar-header {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.5rem;
+  }
+
+  .photo-category {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--text-secondary);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .photo-title {
+    font-size: 2.8rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  @media (max-width: 600px) {
+    .photo-title {
+      font-size: 2rem;
+    }
+  }
+
+  .photo-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-family: var(--font-serif);
+    font-style: italic;
+  }
+
+  /* Technical specifications card */
+  .meta-box {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    padding: 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .meta-title {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.4rem;
+  }
+
+  .meta-item {
+    display: flex;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .meta-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    width: 120px;
+  }
+
+  .meta-val {
+    color: var(--text-primary);
+    font-weight: 300;
+  }
+
+  /* Description content body */
+  .photo-narrative {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+    font-weight: 300;
+  }
+
+  .photo-narrative :global(h3) {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    margin: 2rem 0 0.8rem 0;
+    color: var(--text-primary);
+  }
+
+  .photo-narrative :global(ul) {
+    list-style: none;
+    margin: 1rem 0;
+  }
+
+  .photo-narrative :global(li) {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    position: relative;
+    padding-left: 1.2rem;
+  }
+
+  .photo-narrative :global(li::before) {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--text-primary);
+  }
+
+  .photo-narrative :global(p) {
+    margin-bottom: 1.2rem;
+  }
+</style>

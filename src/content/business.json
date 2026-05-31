@@ -1,0 +1,11 @@
+{
+  "companyName": "Silent Peaks",
+  "companySub": "Creative Photography Studio",
+  "companyDesc": "Fine art landscape, street, and portrait photography studio. Capturing silent moments across the globe.",
+  "companyEmail": "studio@silentpeaks.com",
+  "companyAddress": "London, United Kingdom",
+  "whatsAppNumber": "+447700900099",
+  "whatsappMessage": "Hello! I would like to inquire about your photography prints or services.",
+  "stripePublicKey": "pk_test_51Px...Apex",
+  "accentColor": "#ffffff"
+}

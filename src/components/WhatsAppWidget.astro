@@ -1,0 +1,57 @@
+---
+interface Props {
+  phoneNumber: string;
+  message?: string;
+}
+
+const { phoneNumber, message = "Hello! I am viewing your photography portfolio and would like to enquire about booking a shoot or purchasing prints." } = Astro.props;
+
+const cleanedPhone = phoneNumber.replace(/[\s+]/g, '');
+const encodedMessage = encodeURIComponent(message);
+const whatsappUrl = `https://wa.me/${cleanedPhone}?text=${encodedMessage}`;
+---
+
+<a 
+  href={whatsappUrl} 
+  class="whatsapp-floating-bubble" 
+  target="_blank" 
+  rel="noopener noreferrer" 
+  aria-label="Contact via WhatsApp"
+>
+  <svg class="wa-svg-icon" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 3C9.38 3 4 8.38 4 15c0 2.56.81 4.93 2.18 6.88L5 29l7.33-1.98A11.94 11.94 0 0016 27c6.62 0 12-5.38 12-12S22.62 3 16 3z"></path>
+  </svg>
+</a>
+
+<style>
+  .whatsapp-floating-bubble {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    width: 55px;
+    height: 55px;
+    background-color: var(--text-primary);
+    color: var(--bg-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    border: 1px solid var(--border-color);
+    transition: var(--transition-bounce);
+  }
+
+  .whatsapp-floating-bubble:hover {
+    transform: scale(1.1) rotate(5deg);
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border-color: var(--text-primary);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .wa-svg-icon {
+    width: 26px;
+    height: 26px;
+  }
+</style>

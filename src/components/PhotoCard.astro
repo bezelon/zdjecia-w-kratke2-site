@@ -1,0 +1,116 @@
+---
+interface Props {
+  title: string;
+  image: string;
+  category: string;
+  slug: string;
+  date_taken: Date | string;
+}
+
+const { title, image, category, slug, date_taken } = Astro.props;
+
+// Formatting date
+const year = new Date(date_taken).getFullYear();
+---
+
+<div class="photo-card-item" data-category={category}>
+  <a href={`/photos/${slug}`} class="card-link">
+    <div class="image-wrapper">
+      <img src={image} alt={title} class="card-image" />
+      <div class="card-overlay">
+        <div class="overlay-content">
+          <span class="photo-category">{category}</span>
+          <h3 class="photo-title">{title}</h3>
+          <span class="photo-year">{year}</span>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>
+
+<style>
+  .photo-card-item {
+    break-inside: avoid;
+    margin-bottom: 2rem;
+    position: relative;
+    transition: var(--transition-smooth);
+  }
+
+  .card-link {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--bg-secondary);
+  }
+
+  .card-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: var(--transition-bounce);
+  }
+
+  .card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(17, 17, 17, 0.4); /* Subtle dimming */
+    display: flex;
+    align-items: flex-end;
+    padding: 2rem;
+    opacity: 0;
+    transition: var(--transition-smooth);
+    z-index: 10;
+  }
+
+  .photo-card-item:hover .card-overlay {
+    opacity: 1;
+  }
+
+  .photo-card-item:hover .card-image {
+    transform: scale(1.04);
+  }
+
+  .overlay-content {
+    color: var(--bg-primary);
+    transform: translateY(10px);
+    transition: var(--transition-bounce);
+  }
+
+  .photo-card-item:hover .overlay-content {
+    transform: translateY(0);
+  }
+
+  .photo-category {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+  }
+
+  .photo-title {
+    font-size: 1.6rem;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+  }
+
+  .photo-year {
+    font-size: 0.75rem;
+    font-weight: 300;
+    opacity: 0.7;
+    font-family: var(--font-serif);
+    font-style: italic;
+  }
+</style>

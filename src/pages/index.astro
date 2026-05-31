@@ -1,0 +1,344 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PhotoCard from '../components/PhotoCard.astro';
+import { getCollection, render } from 'astro:content';
+import businessData from '../content/business.json';
+
+// Fetch collections
+const photos = await getCollection('photos');
+const aboutEntries = await getCollection('about_page');
+const about = aboutEntries[0];
+
+// Render About Me Markdown content
+const { Content: AboutContent } = about ? await render(about) : { Content: null };
+
+// Unique categories list
+const categories = ['all', 'landscape', 'portrait', 'editorial', 'street'];
+---
+
+<Layout title="Visual Journal & Fine Art Photography" description={businessData.companyDesc}>
+  <!-- Minimalist Intro Header -->
+  <section class="intro-section animate-fade-in">
+    <div class="container">
+      <span class="intro-tag">{businessData.companySub}</span>
+      <h1 class="intro-title">{businessData.companyDesc}</h1>
+    </div>
+  </section>
+
+  <!-- Gallery Filter & Grid Section -->
+  <section class="gallery-section">
+    <div class="container">
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        {categories.map((cat, index) => (
+          <button 
+            class={`filter-btn ${index === 0 ? 'active' : ''}`} 
+            data-filter={cat}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      <!-- Masonry Grid -->
+      <div id="gallery-masonry" class="gallery-masonry">
+        {photos.map(photo => (
+          <PhotoCard
+            title={photo.data.title}
+            image={photo.data.image}
+            category={photo.data.category}
+            slug={photo.id}
+            date_taken={photo.data.date_taken}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- About Me Section -->
+  {about && (
+    <section id="about" class="section about-section">
+      <div class="container about-container">
+        <div class="about-visual">
+          <img src={about.data.profile_image || "/images/uploads/profile.png"} alt="Photographer portrait" class="profile-img" />
+        </div>
+        <div class="about-content">
+          <span class="section-subtitle">Biography</span>
+          <h2 class="about-title">{about.data.title}</h2>
+          <div class="about-bio markdown-body">
+            {AboutContent ? <AboutContent /> : <p>Biography details coming soon.</p>}
+          </div>
+          
+          <div class="about-contact-details">
+            <p><strong>Email:</strong> <a href={`mailto:${businessData.companyEmail || about.data.email}`}>{businessData.companyEmail || about.data.email}</a></p>
+            {(businessData.whatsAppNumber || about.data.whatsapp) && (
+              <p><strong>WhatsApp:</strong> <a href={`https://wa.me/${(businessData.whatsAppNumber || about.data.whatsapp).replace(/[\s+]/g, '')}`}>{businessData.whatsAppNumber || about.data.whatsapp}</a></p>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Contact Section -->
+  <section id="contact" class="section contact-section">
+    <div class="container text-center">
+      <span class="section-subtitle">Collaborations</span>
+      <h2 class="contact-title">Let's Create Something Together</h2>
+      <p class="contact-desc">
+        For session bookings, commercial commissions, print licensing, or general inquiries, feel free to reach out.
+      </p>
+      <div class="contact-actions">
+        <a href={`mailto:${businessData.companyEmail || about?.data.email || 'inquiries@aetherfineart.com'}`} class="btn btn-primary">Send Email Inquiry</a>
+        <a href="#about" class="btn btn-secondary">Read Bio</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<!-- Client side Javascript for smooth Category Filtering -->
+<script is:inline>
+  (function() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const photoItems = document.querySelectorAll('.photo-card-item');
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Remove active class from all buttons
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        // Add active class to clicked button
+        button.classList.add('active');
+
+        const filterValue = button.getAttribute('data-filter');
+
+        photoItems.forEach(item => {
+          const itemCategory = item.getAttribute('data-category');
+
+          if (filterValue === 'all' || itemCategory === filterValue) {
+            item.style.display = 'block';
+            // Trigger quick layout fade in
+            setTimeout(() => {
+              item.style.opacity = '1';
+              item.style.transform = 'scale(1)';
+            }, 10);
+          } else {
+            item.style.opacity = '0';
+            item.style.transform = 'scale(0.95)';
+            // Hide after transition
+            setTimeout(() => {
+              item.style.display = 'none';
+            }, 300);
+          }
+        });
+      });
+    });
+  })();
+</script>
+
+<style>
+  /* Intro Section */
+  .intro-section {
+    padding: 6rem 0 3rem 0;
+    background-color: var(--bg-primary);
+  }
+
+  .intro-tag {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+  }
+
+  .intro-title {
+    font-size: 3.6rem;
+    color: var(--text-primary);
+    max-width: 900px;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  @media (max-width: 768px) {
+    .intro-title {
+      font-size: 2.4rem;
+    }
+  }
+
+  /* Gallery Section */
+  .gallery-section {
+    background-color: var(--bg-primary);
+    padding: 2rem 0 6rem 0;
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 3.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    background: none;
+    border: none;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    padding-bottom: 1rem;
+    position: relative;
+    bottom: -17px;
+  }
+
+  .filter-btn:hover {
+    color: var(--text-primary);
+  }
+
+  .filter-btn.active {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .filter-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--text-primary);
+  }
+
+  /* Masonry Layout */
+  .gallery-masonry {
+    column-count: 3;
+    column-gap: 2rem;
+  }
+
+  @media (max-width: 900px) {
+    .gallery-masonry {
+      column-count: 2;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .gallery-masonry {
+      column-count: 1;
+    }
+  }
+
+  /* About Section */
+  .about-section {
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+  }
+
+  .about-container {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 5rem;
+    align-items: flex-start;
+  }
+
+  @media (max-width: 900px) {
+    .about-container {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
+
+  .about-visual {
+    display: flex;
+    justify-content: center;
+  }
+
+  .profile-img {
+    width: 100%;
+    max-width: 380px;
+    height: auto;
+    border-radius: 0; /* Minimalist raw edges */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  }
+
+  .about-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .section-subtitle {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    display: inline-block;
+  }
+
+  .about-title {
+    font-size: 2.2rem;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+  }
+
+  .about-bio {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .about-bio :global(p) {
+    margin-bottom: 1rem;
+  }
+
+  .about-contact-details {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .about-contact-details a {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .about-contact-details a:hover {
+    text-decoration: underline;
+  }
+
+  /* Contact CTA Section */
+  .contact-section {
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+  }
+
+  .contact-title {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+  }
+
+  .contact-desc {
+    max-width: 500px;
+    margin: 0 auto 2.5rem auto;
+    color: var(--text-secondary);
+  }
+
+  .contact-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+</style>
