@@ -2,9 +2,9 @@
 
 backend:
   name: github
-  repo: AetherFineArt/astro-photography-portfolio # Placeholder
+  repo: bezelon/zdjecia-w-kratke2-site
   branch: main
-  base_url: https://astro-portfolio.pages.dev # Placeholder
+  base_url: http://localhost:4325
   auth_endpoint: api/auth
 
 # Media Folders
