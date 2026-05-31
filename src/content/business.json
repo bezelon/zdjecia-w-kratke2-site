@@ -1,11 +1,14 @@
 {
-  "companyName": "Silent Peaks",
-  "companySub": "Creative Photography Studio",
-  "companyDesc": "Fine art landscape, street, and portrait photography studio. Capturing silent moments across the globe.",
-  "companyEmail": "studio@silentpeaks.com",
-  "companyAddress": "London, United Kingdom",
-  "whatsAppNumber": "+447700900099",
-  "whatsappMessage": "Hello! I would like to inquire about your photography prints or services.",
+  "companyName": "Zdjecia w Kratke2",
+  "companySub": "Boutique & Shop",
+  "companyDesc": "Zawsze w punkt! test numer 2",
+  "companyEmail": "firma@portf.co.uk",
+  "companyAddress": "Londyn, UKtest2",
+  "whatsAppNumber": "447700770079",
+  "whatsappMessage": "Witaj! Chciałbym zapytać o ofertę.",
   "stripePublicKey": "pk_test_51Px...Apex",
-  "accentColor": "#ffffff"
+  "accentColor": "#c58f72",
+  "secondaryColor": "#32f401",
+  "logoOption": "none",
+  "generatedAt": "2026-05-31T09:11:35.063Z"
 }
